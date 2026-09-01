@@ -1,337 +1,227 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookingProvider, useBooking } from './context/BookingContext';
-import type { ViewState } from './types';
+import { LoadingScreen } from './components/finance/LoadingScreen';
+import { Navbar } from './components/finance/Navbar';
+import { HeroSection } from './components/finance/HeroSection';
+import { QuickQueryPopup } from './components/finance/QuickQueryPopup';
+import { ServicesSection } from './components/finance/ServicesSection';
+import { PhotoBreak } from './components/finance/PhotoBreak';
+import { WhyChooseUs } from './components/finance/WhyChooseUs';
+import { AchievementsTimeline } from './components/finance/AchievementsTimeline';
+import { HowItWorks } from './components/finance/HowItWorks';
+import { EligibilityCalculator } from './components/finance/EligibilityCalculator';
+import { GovernmentSchemes } from './components/finance/GovernmentSchemes';
+import { TestimonialsSection } from './components/finance/TestimonialsSection';
+import { ExpertConsultation } from './components/finance/ExpertConsultation';
+import { FaqSection } from './components/finance/FaqSection';
+import { ContactSection } from './components/finance/ContactSection';
+import { FloatingActions } from './components/finance/FloatingActions';
+import { SmartLeadModal } from './components/finance/SmartLeadModal';
+import { Footer } from './components/finance/Footer';
+import type { LeadFormData } from './types/finance';
+import { CheckCircle2, X } from 'lucide-react';
 
-// Common Components
-import { GlobalTopBar } from './components/common/GlobalTopBar';
-import { BookingsDrawer } from './components/common/BookingsDrawer';
-import { CursorFollower } from './components/common/CursorFollower';
+export default function App() {
+  // Modals & Popups State
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [hasPopupBeenShown, setHasPopupBeenShown] = useState(false);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [selectedServiceForModal, setSelectedServiceForModal] = useState<string | undefined>(undefined);
+  const [prefillDataForModal, setPrefillDataForModal] = useState<Partial<LeadFormData> | undefined>(undefined);
 
-// Showcase Components
-import { ShowcaseHero } from './components/showcase/ShowcaseHero';
-import { IndustryCard } from './components/showcase/IndustryCard';
-import type { IndustryCardData } from './components/showcase/IndustryCard';
-import { ShowcaseFooter } from './components/showcase/ShowcaseFooter';
+  // Submission Toast Notification
+  const [toastNotification, setToastNotification] = useState<{
+    show: boolean;
+    refId: string;
+    name: string;
+  }>({
+    show: false,
+    refId: '',
+    name: ''
+  });
 
-// Doctor Website Components
-import { DoctorNav } from './components/doctor/DoctorNav';
-import { DoctorHero } from './components/doctor/DoctorHero';
-import { DoctorTreatments } from './components/doctor/DoctorTreatments';
-import { DoctorProfile } from './components/doctor/DoctorProfile';
-import { DoctorStats } from './components/doctor/DoctorStats';
-import { DoctorGallery } from './components/doctor/DoctorGallery';
-import { DoctorBookingModal } from './components/doctor/DoctorBookingModal';
+  // Timed non-intrusive popup trigger (5s delay — after loading screen)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasPopupBeenShown) {
+        setIsPopupOpen(true);
+        setHasPopupBeenShown(true);
+      }
+    }, 5500);
 
-// Law Website Components
-import { LawNav } from './components/law/LawNav';
-import { LawHero } from './components/law/LawHero';
-import { LawPracticeAreas } from './components/law/LawPracticeAreas';
-import { LawAttorneys } from './components/law/LawAttorneys';
-import { LawCaseStudies } from './components/law/LawCaseStudies';
-import { LawConsultationModal } from './components/law/LawConsultationModal';
+    return () => clearTimeout(timer);
+  }, [hasPopupBeenShown]);
 
-// Hotel Website Components
-import { HotelNav } from './components/hotel/HotelNav';
-import { HotelHero } from './components/hotel/HotelHero';
-import { HotelRooms } from './components/hotel/HotelRooms';
-import { HotelExperiences } from './components/hotel/HotelExperiences';
-import { HotelBookingModal } from './components/hotel/HotelBookingModal';
+  const handleOpenLeadModal = (initialService?: string, prefill?: Partial<LeadFormData>) => {
+    setSelectedServiceForModal(initialService);
+    setPrefillDataForModal(prefill);
+    setIsLeadModalOpen(true);
+  };
 
-// Salon Website Components
-import { SalonNav } from './components/salon/SalonNav';
-import { SalonHero } from './components/salon/SalonHero';
-import { SalonServices } from './components/salon/SalonServices';
-import { SalonStylists } from './components/salon/SalonStylists';
-import { SalonBookingModal } from './components/salon/SalonBookingModal';
+  const handleCloseLeadModal = () => {
+    setIsLeadModalOpen(false);
+    setSelectedServiceForModal(undefined);
+    setPrefillDataForModal(undefined);
+  };
 
-// Restaurant Website Components
-import { RestaurantNav } from './components/restaurant/RestaurantNav';
-import { RestaurantHero } from './components/restaurant/RestaurantHero';
-import { RestaurantChef } from './components/restaurant/RestaurantChef';
-import { RestaurantMenu } from './components/restaurant/RestaurantMenu';
-import { InteractiveFloorPlan } from './components/restaurant/InteractiveFloorPlan';
-import { RestaurantReservationModal } from './components/restaurant/RestaurantReservationModal';
+  const handleLeadSubmitSuccess = (refId: string, name: string) => {
+    setToastNotification({
+      show: true,
+      refId,
+      name
+    });
 
-// Showcase Cards Data
-const SHOWCASE_CARDS: IndustryCardData[] = [
-  {
-    id: 'doctor',
-    number: '01',
-    industry: 'Healthcare & Cardiology',
-    name: 'VÉRA MEDICAL',
-    tagline: 'Minimal Luxury Healthcare',
-    description: 'Advanced cardiovascular care with a patient-first approach led by Dr. Arjun Mehra. Features live stat counters, 3D medical card depth, and multi-step appointment scheduling.',
-    image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1200&auto=format&fit=crop',
-    accentColor: '#3b82f6',
-    themeClass: 'font-doctor',
-    features: ['Dr. Arjun Mehra', '4.9 Rating', '12K+ Patients', 'Live Appointment Slots']
-  },
-  {
-    id: 'law',
-    number: '02',
-    industry: 'International Law Firm',
-    name: 'BLACKSTONE & CO.',
-    tagline: 'Strategic Corporate Counsel',
-    description: 'Precision in every argument. Institutional legal practice for cross-border deals, IP litigation, and arbitration with lead partners Charles Blackstone & Victoria Vance.',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1200&auto=format&fit=crop',
-    accentColor: '#d4af37',
-    themeClass: 'font-law-serif',
-    features: ['$4.8B+ Transactions', '320+ Cases', 'Corporate M&A', 'Consultation Engine']
-  },
-  {
-    id: 'hotel',
-    number: '03',
-    industry: 'Ultra-Luxury Hotel',
-    name: 'THE AURELIA',
-    tagline: 'Lake Como Private Retreat',
-    description: 'Stay somewhere unforgettable. Overlooking Lake Como with private Riva boat charters, lakeview suites, and a dynamic real-time hotel price calculation booking engine.',
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop',
-    accentColor: '#fbbf24',
-    themeClass: 'font-hotel-serif',
-    features: ['Lake Como, Italy', 'Lakeview Suites', 'Live Calculator', 'Spa & Yacht Charters']
-  },
-  {
-    id: 'salon',
-    number: '04',
-    industry: 'Haute Beauté & Studio',
-    name: 'MAISON ÉLAN',
-    tagline: 'Fashion Editorial Beauty',
-    description: 'Your best look, beautifully considered. High-fashion hair sculpting, Parisian balayage, and cellular skincare rituals with master artist selection.',
-    image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=1200&auto=format&fit=crop',
-    accentColor: '#fb7185',
-    themeClass: 'font-salon-serif',
-    features: ['Master Stylists', 'Signature Cut', 'Russian Manicure', 'Live Summary']
-  },
-  {
-    id: 'restaurant',
-    number: '05',
-    industry: 'Fine-Dining Restaurant',
-    name: 'NOIR',
-    tagline: 'Avant-Garde Modern Cuisine',
-    description: 'An evening worth remembering in New Delhi. Guided by Chef Kabir Malhotra, featuring an interactive SVG visual restaurant floor-plan table picker.',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop',
-    accentColor: '#f59e0b',
-    themeClass: 'font-restaurant-serif',
-    features: ['Chef Kabir Malhotra', 'Interactive Floor Plan', 'Tasting Menu', 'Table Selector']
-  }
-];
+    setTimeout(() => {
+      setToastNotification(prev => ({ ...prev, show: false }));
+    }, 6000);
+  };
 
-const MainShowcaseContent: React.FC = () => {
-  const { activeView, setActiveView } = useBooking();
+  const handleCheckEligibilityWithData = (data: {
+    serviceType: string;
+    monthlyIncome: number;
+    employmentType: string;
+    city: string;
+    loanAmount: number;
+    tenureYears: number;
+  }) => {
+    handleOpenLeadModal(data.serviceType, {
+      serviceType: data.serviceType,
+      monthlyIncome: data.monthlyIncome,
+      employmentType: data.employmentType as any,
+      city: data.city,
+      loanAmount: data.loanAmount,
+      tenureYears: data.tenureYears
+    });
+  };
 
-  // Modals state for individual sites
-  const [isDoctorModalOpen, setIsDoctorModalOpen] = useState(false);
-  const [isLawModalOpen, setIsLawModalOpen] = useState(false);
-  const [isHotelModalOpen, setIsHotelModalOpen] = useState(false);
-  const [selectedHotelRoomId, setSelectedHotelRoomId] = useState<string | undefined>(undefined);
-  const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
-  const [selectedSalonServiceId, setSelectedSalonServiceId] = useState<string | undefined>(undefined);
-  const [isRestaurantModalOpen, setIsRestaurantModalOpen] = useState(false);
-
-  const handleSelectView = (view: ViewState) => {
-    setActiveView(view);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToSection = (sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#08080a] text-white selection:bg-amber-400 selection:text-black">
-      <GlobalTopBar />
-      <CursorFollower />
-      <BookingsDrawer />
+    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans-main selection:bg-[#e8c547] selection:text-[#020617]">
 
-      <AnimatePresence mode="wait">
-        {/* VIEW 0: MAIN SHOWCASE LANDING PAGE */}
-        {activeView === 'showcase' && (
+      {/* Premium Loading Screen */}
+      <LoadingScreen />
+
+      {/* Sticky Navigation */}
+      <Navbar onOpenLeadModal={() => handleOpenLeadModal()} />
+
+      {/* 1. Cinematic Hero with 3D Configurator */}
+      <HeroSection
+        onOpenLeadModal={(svc) => handleOpenLeadModal(svc)}
+        onExploreServices={() => scrollToSection('services')}
+        onOpenCalculator={() => scrollToSection('calculator')}
+      />
+
+      {/* 2. Comprehensive Services Grid */}
+      <ServicesSection onOpenLeadModal={(svc) => handleOpenLeadModal(svc)} />
+
+      {/* === PHOTO BREAK: Financial Planning === */}
+      <PhotoBreak
+        imageUrl="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?q=80&w=2000&auto=format&fit=crop"
+        headline="Empowering Financial Decisions with Expert Guidance"
+        subtext="From first-time home buyers to established enterprises — we structure the financing that turns ambitious goals into reality."
+      />
+
+      {/* 3. Why Choose Us (8 Pillars + Comparison Matrix) */}
+      <WhyChooseUs onOpenLeadModal={() => handleOpenLeadModal('General Inquiry')} />
+
+      {/* 4. Achievements & Interactive Journey Timeline */}
+      <AchievementsTimeline />
+
+      {/* === PHOTO BREAK: Business Growth === */}
+      <PhotoBreak
+        imageUrl="https://images.unsplash.com/photo-1553729459-uj5uknehr66?q=80&w=2000&auto=format&fit=crop"
+        headline="A Decade of Building Financial Partnerships"
+        subtext="Over 25,000 clients and ₹4,800+ crore facilitated across retail, commercial, and government lending."
+      />
+
+      {/* 5. How It Works (Connected 5-Step Process) */}
+      <HowItWorks onOpenLeadModal={() => handleOpenLeadModal('Process Consultation')} />
+
+      {/* 6. Interactive Loan Eligibility & EMI Calculator */}
+      <EligibilityCalculator
+        onCheckEligibilityWithData={handleCheckEligibilityWithData}
+      />
+
+      {/* 7. Government Financial Schemes & Subsidies */}
+      <GovernmentSchemes onOpenLeadModal={(svc) => handleOpenLeadModal(svc)} />
+
+      {/* === PHOTO BREAK: Professional Advisory === */}
+      <PhotoBreak
+        imageUrl="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2000&auto=format&fit=crop"
+        headline="Your Financial Goals Deserve Expert Strategy"
+        subtext="Speak directly with certified credit underwriters who negotiate the lowest rates on your behalf."
+      />
+
+      {/* 8. Testimonials & Client Success Stories */}
+      <TestimonialsSection onOpenLeadModal={() => handleOpenLeadModal('Consultation Request')} />
+
+      {/* 9. Expert Consultation High-Conversion Desk */}
+      <ExpertConsultation onOpenLeadModal={(svc) => handleOpenLeadModal(svc)} />
+
+      {/* 10. Frequently Asked Questions */}
+      <FaqSection onOpenLeadModal={() => handleOpenLeadModal('General Consultation')} />
+
+      {/* 11. Contact Section & Regional Hubs */}
+      <ContactSection onSubmitSuccess={handleLeadSubmitSuccess} />
+
+      {/* 12. Enterprise Footer & Legal Disclaimers */}
+      <Footer onOpenLeadModal={(svc) => handleOpenLeadModal(svc)} />
+
+      {/* Floating WhatsApp & Quick Actions */}
+      <FloatingActions
+        onOpenLeadModal={() => handleOpenLeadModal()}
+        isPopupDismissed={hasPopupBeenShown && !isPopupOpen}
+      />
+
+      {/* Timed Quick Query Popup */}
+      <QuickQueryPopup
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+        onSubmitSuccess={handleLeadSubmitSuccess}
+      />
+
+      {/* Smart 5-Step Lead Management Modal */}
+      <SmartLeadModal
+        isOpen={isLeadModalOpen}
+        onClose={handleCloseLeadModal}
+        initialService={selectedServiceForModal}
+        prefillData={prefillDataForModal}
+      />
+
+      {/* Global Success Notification Toast */}
+      <AnimatePresence>
+        {toastNotification.show && (
           <motion.div
-            key="showcase"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="fixed bottom-24 left-6 z-50 p-4 rounded-2xl glass-panel-gold bg-[#0a1628] border border-emerald-500/25 shadow-2xl flex items-center gap-3 max-w-sm"
           >
-            <ShowcaseHero />
-
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-32 space-y-12">
-              <div className="flex items-center justify-between border-b border-white/10 pb-6">
-                <div>
-                  <span className="text-xs uppercase tracking-widest text-amber-400 font-mono font-bold block">
-                    Interactive Showcase Catalog
-                  </span>
-                  <h2 className="text-3xl sm:text-4xl font-bold font-serif-luxury text-white mt-1">
-                    Select a Luxury Website Experience
-                  </h2>
-                </div>
-                <span className="hidden sm:block text-xs text-white/50 font-mono">
-                  5 Real Business Concepts
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-                {SHOWCASE_CARDS.map((card, idx) => (
-                  <IndustryCard
-                    key={card.id}
-                    card={card}
-                    index={idx}
-                    onSelect={handleSelectView}
-                  />
-                ))}
-              </div>
-            </section>
-
-            <ShowcaseFooter />
-          </motion.div>
-        )}
-
-        {/* VIEW 1: VÉRA MEDICAL (DOCTOR) */}
-        {activeView === 'doctor' && (
-          <motion.div
-            key="doctor"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#090d16]"
-          >
-            <DoctorNav onOpenBooking={() => setIsDoctorModalOpen(true)} />
-            <DoctorHero onOpenBooking={() => setIsDoctorModalOpen(true)} />
-            <DoctorTreatments onSelectTreatment={() => setIsDoctorModalOpen(true)} />
-            <DoctorProfile />
-            <DoctorStats />
-            <DoctorGallery />
-            <DoctorBookingModal
-              isOpen={isDoctorModalOpen}
-              onClose={() => setIsDoctorModalOpen(false)}
-            />
-          </motion.div>
-        )}
-
-        {/* VIEW 2: BLACKSTONE & CO. (LAW) */}
-        {activeView === 'law' && (
-          <motion.div
-            key="law"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#08080a]"
-          >
-            <LawNav onOpenConsultation={() => setIsLawModalOpen(true)} />
-            <LawHero onOpenConsultation={() => setIsLawModalOpen(true)} />
-            <LawPracticeAreas onSelectPractice={() => setIsLawModalOpen(true)} />
-            <LawAttorneys onSelectAttorney={() => setIsLawModalOpen(true)} />
-            <LawCaseStudies />
-            <LawConsultationModal
-              isOpen={isLawModalOpen}
-              onClose={() => setIsLawModalOpen(false)}
-            />
-          </motion.div>
-        )}
-
-        {/* VIEW 3: THE AURELIA (HOTEL) */}
-        {activeView === 'hotel' && (
-          <motion.div
-            key="hotel"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#0d0c0a]"
-          >
-            <HotelNav onOpenBooking={() => setIsHotelModalOpen(true)} />
-            <HotelHero onOpenBooking={() => setIsHotelModalOpen(true)} />
-            <HotelRooms
-              onSelectRoom={(roomId) => {
-                setSelectedHotelRoomId(roomId);
-                setIsHotelModalOpen(true);
-              }}
-            />
-            <HotelExperiences />
-            <HotelBookingModal
-              isOpen={isHotelModalOpen}
-              onClose={() => setIsHotelModalOpen(false)}
-              initialRoomId={selectedHotelRoomId}
-            />
-          </motion.div>
-        )}
-
-        {/* VIEW 4: MAISON ÉLAN (SALON) */}
-        {activeView === 'salon' && (
-          <motion.div
-            key="salon"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#110e0e]"
-          >
-            <SalonNav onOpenBooking={() => setIsSalonModalOpen(true)} />
-            <SalonHero onOpenBooking={() => setIsSalonModalOpen(true)} />
-            <SalonServices
-              onSelectService={(serviceId) => {
-                setSelectedSalonServiceId(serviceId);
-                setIsSalonModalOpen(true);
-              }}
-            />
-            <SalonStylists onSelectStylist={() => setIsSalonModalOpen(true)} />
-            <SalonBookingModal
-              isOpen={isSalonModalOpen}
-              onClose={() => setIsSalonModalOpen(false)}
-              initialServiceId={selectedSalonServiceId}
-            />
-          </motion.div>
-        )}
-
-        {/* VIEW 5: NOIR (RESTAURANT) */}
-        {activeView === 'restaurant' && (
-          <motion.div
-            key="restaurant"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#070709]"
-          >
-            <RestaurantNav onOpenReservation={() => setIsRestaurantModalOpen(true)} />
-            <RestaurantHero onOpenReservation={() => setIsRestaurantModalOpen(true)} />
-            <RestaurantChef />
-            <RestaurantMenu />
-
-            {/* Standalone Interactive Floorplan Preview Section */}
-            <section id="noir-floor" className="py-24 px-4 sm:px-6 bg-[#09090c] border-t border-amber-500/20">
-              <div className="max-w-4xl mx-auto space-y-8 text-center">
-                <div className="space-y-2">
-                  <span className="text-xs font-mono uppercase tracking-widest text-amber-400">
-                    03 — Dining Layout
-                  </span>
-                  <h2 className="text-4xl font-bold font-serif-luxury text-white">Visual Table Selection</h2>
-                  <p className="text-sm text-amber-100/60 font-light">
-                    Select your preferred table on our visual floor plan to launch table reservation.
-                  </p>
-                </div>
-
-                <InteractiveFloorPlan
-                  selectedTableId={null}
-                  onSelectTable={() => setIsRestaurantModalOpen(true)}
-                />
-              </div>
-            </section>
-
-            <RestaurantReservationModal
-              isOpen={isRestaurantModalOpen}
-              onClose={() => setIsRestaurantModalOpen(false)}
-            />
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div className="flex-1 text-xs">
+              <span className="font-bold text-white block">Inquiry Received</span>
+              <span className="text-slate-300">
+                Ref <strong className="text-[#e8c547] font-mono">{toastNotification.refId}</strong> for {toastNotification.name}.
+              </span>
+            </div>
+            <button
+              onClick={() => setToastNotification(prev => ({ ...prev, show: false }))}
+              className="p-1 text-slate-500 hover:text-white cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
-};
 
-export default function App() {
-  return (
-    <BookingProvider>
-      <MainShowcaseContent />
-    </BookingProvider>
+    </div>
   );
 }
