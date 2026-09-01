@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Building, 
@@ -6,12 +6,7 @@ import {
   Cpu, 
   Landmark, 
   ShieldCheck, 
-  Award, 
-  Users, 
-  Percent, 
-  Clock, 
-  Sparkles,
-  Calendar
+  Award
 } from 'lucide-react';
 import { TIMELINE_MILESTONES, COMPANY_INFO } from '../../data/financeData';
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Send, 
@@ -7,9 +7,7 @@ import {
   FileCheck2, 
   CheckCircle2, 
   ArrowRight, 
-  Sparkles,
-  Clock,
-  ShieldAlert
+  Sparkles
 } from 'lucide-react';
 import { PROCESS_STEPS } from '../../data/financeData';
 

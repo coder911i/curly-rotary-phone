@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HelpCircle, 
   ChevronDown, 
-  Sparkles, 
   Search, 
-  MessageSquare, 
-  Phone,
+  MessageSquare,
   ArrowRight
 } from 'lucide-react';
 import { FAQS, COMPANY_INFO } from '../../data/financeData';

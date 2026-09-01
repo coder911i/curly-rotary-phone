@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -6,7 +6,6 @@ import {
   Send, 
   MessageSquare, 
   ShieldCheck, 
-  CheckCircle2, 
   Phone, 
   User, 
   Mail, 

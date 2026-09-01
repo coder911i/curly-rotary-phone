@@ -1,15 +1,10 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   CheckCircle2, 
   FileText, 
-  Clock, 
-  Percent, 
-  ShieldCheck, 
   ArrowRight, 
   MessageSquare,
-  BadgeCheck,
   UserCheck
 } from 'lucide-react';
 import type { ServiceItem } from '../../types/finance';

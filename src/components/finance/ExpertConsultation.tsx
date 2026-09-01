@@ -1,5 +1,3 @@
-import React from 'react';
-import { motion } from 'framer-motion';
 import { 
   PhoneCall, 
   MessageSquare, 
@@ -8,9 +6,7 @@ import {
   Clock, 
   Sparkles, 
   ArrowRight,
-  Headphones,
-  CheckCircle2,
-  Users
+  Headphones
 } from 'lucide-react';
 import { COMPANY_INFO } from '../../data/financeData';
 

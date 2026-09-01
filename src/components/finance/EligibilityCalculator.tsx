@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Calculator, 
-  Sparkles, 
-  TrendingUp, 
   ArrowRight, 
   ShieldCheck, 
-  CheckCircle2, 
-  PieChart, 
-  Percent, 
-  Coins, 
-  Building,
-  HelpCircle
+  CheckCircle2
 } from 'lucide-react';
 
 interface EligibilityCalculatorProps {

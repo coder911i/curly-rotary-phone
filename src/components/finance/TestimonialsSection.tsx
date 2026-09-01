@@ -1,17 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Star, 
   Quote, 
   ShieldCheck, 
-  Sparkles, 
-  ArrowRight, 
-  CheckCircle2,
-  ThumbsUp,
-  Building,
-  UserCheck
+  ArrowRight
 } from 'lucide-react';
-import { TESTIMONIALS, COMPANY_INFO } from '../../data/financeData';
+import { TESTIMONIALS } from '../../data/financeData';
 
 interface TestimonialsSectionProps {
   onOpenLeadModal: () => void;

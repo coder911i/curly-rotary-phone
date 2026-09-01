@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Phone, 
@@ -7,10 +7,7 @@ import {
   X, 
   Shield, 
   ChevronRight, 
-  ArrowUpRight,
-  Landmark,
-  Calculator,
-  FileCheck
+  ArrowUpRight
 } from 'lucide-react';
 import { COMPANY_INFO } from '../../data/financeData';
 

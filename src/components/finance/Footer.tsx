@@ -1,15 +1,11 @@
-import React from 'react';
 import { 
   Shield, 
   Phone, 
   Mail, 
   MapPin, 
-  Clock, 
   ArrowUpRight, 
   ShieldCheck, 
-  Landmark, 
-  Heart,
-  FileText
+  Landmark
 } from 'lucide-react';
 import { COMPANY_INFO, SERVICES, GOVERNMENT_SCHEMES } from '../../data/financeData';
 

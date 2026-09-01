@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Landmark, 
-  Sparkles, 
   CheckCircle2, 
   ArrowRight, 
   MessageSquare, 
-  ShieldAlert, 
-  Coins, 
-  Building2, 
-  FileText, 
-  ChevronRight,
-  Info
+  ShieldAlert
 } from 'lucide-react';
 import { GOVERNMENT_SCHEMES, COMPANY_INFO } from '../../data/financeData';
 import type { GovernmentScheme } from '../../types/finance';
@@ -22,7 +16,6 @@ interface GovernmentSchemesProps {
 
 export const GovernmentSchemes: React.FC<GovernmentSchemesProps> = ({ onOpenLeadModal }) => {
   const [activeSector, setActiveSector] = useState<'all' | 'msme' | 'startup' | 'women' | 'education' | 'housing' | 'agriculture'>('all');
-  const [selectedScheme, setSelectedScheme] = useState<GovernmentScheme | null>(null);
 
   const filteredSchemes = activeSector === 'all'
     ? GOVERNMENT_SCHEMES

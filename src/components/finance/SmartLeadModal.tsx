@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -6,18 +6,13 @@ import {
   Phone, 
   Mail, 
   MapPin, 
-  Briefcase, 
-  DollarSign, 
   Clock, 
   CheckCircle2, 
   Sparkles, 
   ArrowRight, 
   ArrowLeft, 
-  MessageSquare, 
-  ShieldCheck,
-  Send,
-  Building,
-  Check
+  MessageSquare,
+  Send
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SERVICES, COMPANY_INFO } from '../../data/financeData';

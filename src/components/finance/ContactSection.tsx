@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { 
   Mail, 
   Phone, 
@@ -7,11 +6,7 @@ import {
   Clock, 
   Send, 
   ShieldCheck, 
-  Building2, 
-  MessageSquare, 
-  CheckCircle2, 
-  Sparkles,
-  ArrowRight
+  CheckCircle2
 } from 'lucide-react';
 import { COMPANY_INFO, SERVICES } from '../../data/financeData';
 

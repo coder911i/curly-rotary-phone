@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LoadingScreen } from './components/finance/LoadingScreen';
 import { Navbar } from './components/finance/Navbar';

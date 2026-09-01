@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Home, 
@@ -16,8 +16,7 @@ import {
   ArrowRight, 
   MessageSquare, 
   Info, 
-  Sparkles,
-  ChevronRight
+  Sparkles
 } from 'lucide-react';
 import { SERVICES, COMPANY_INFO } from '../../data/financeData';
 import type { ServiceItem } from '../../types/finance';

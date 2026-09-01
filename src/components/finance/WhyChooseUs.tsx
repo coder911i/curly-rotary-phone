@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   UserCheck, 
@@ -14,7 +14,7 @@ import {
   ArrowRight,
   CheckCircle2
 } from 'lucide-react';
-import { WHY_CHOOSE_US_POINTS, COMPANY_INFO } from '../../data/financeData';
+import { WHY_CHOOSE_US_POINTS } from '../../data/financeData';
 
 interface WhyChooseUsProps {
   onOpenLeadModal: () => void;

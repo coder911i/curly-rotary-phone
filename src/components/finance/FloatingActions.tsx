@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, ArrowUp, Sparkles, PhoneCall } from 'lucide-react';
+import { MessageSquare, ArrowUp, Sparkles } from 'lucide-react';
 import { COMPANY_INFO } from '../../data/financeData';
 
 interface FloatingActionsProps {
